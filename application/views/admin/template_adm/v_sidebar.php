@@ -73,8 +73,10 @@
                         </ul>
                     </li>
                     <!-- akhir ngopy sampai sini -->
-                
-                    <li class="nav-item has-treeview menu-open">
+
+                    <li class="nav-header">Website</li>
+
+                    <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-blog"></i>
                             <p>
