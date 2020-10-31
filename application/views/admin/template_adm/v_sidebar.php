@@ -23,7 +23,7 @@
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                     <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
                     <!-- MENU -->
-                    
+
                     <!-- ini menu yang ga ada sub menunya -->
                     <!-- kalo ngopy codingan menunya dari sini -->
                     <li class="nav-item">
@@ -57,7 +57,7 @@
                                 </a>
                             </li>
                             <!-- sampe sini -->
-                            
+
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
@@ -74,8 +74,6 @@
                     </li>
                     <!-- akhir ngopy sampai sini -->
 
-                    <li class="nav-header">Website</li>
-
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-blog"></i>
@@ -86,13 +84,62 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="<?= base_url('admin/blog'); ?>" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Blog</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('admin/kategori'); ?>" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Kategori</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="<?= base_url('admin/tags'); ?>" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Tags</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-key"></i>
+                            <p>
+                                Setting Website
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Sosial Media</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Halaman</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Tentang</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Key API</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

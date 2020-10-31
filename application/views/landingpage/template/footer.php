@@ -16,7 +16,7 @@
                         <h5 class="text-uppercase">Menu</h5>
                         <ul class="list-unstyled">
                             <li>
-                            <a href="">Beranda</a>
+                            <a href="<?= base_url();?>">Beranda</a>
                             </li>
                             <li>
                             <a href="#">Kelas</a>
@@ -41,8 +41,8 @@
                 </div>
                 <div class="copyrights text-center">
                     <p class="para">
-                        Copyright ©2020 All rights reserved by
-                        <a href="<?= base_url('peserta/auth'); ?>"><span style="color: var(--primary-color);">Preneur Academy</span></a>
+                        Copyright ©<?= date('Y')?> All rights reserved by
+                        <a href="<?= base_url(); ?>"><span style="color: var(--primary-color);">Preneur Academy</span></a>
                     </p>
                 </div>
             </div>
@@ -67,6 +67,9 @@
 
     <!--  custom js file  -->
     <script src="<?= base_url(); ?>assets/dist/js/main.js"></script>
+
+    <!--===============================================================================================-->
+
 
 
 </body>
