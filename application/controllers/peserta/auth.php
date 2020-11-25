@@ -7,26 +7,20 @@ class Auth extends CI_Controller
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->model('peserta/m_auth');
-	}
-
-	/** Menampilkan Form beranda */
-	public function index()
-	{
-		// if (!$this->session->userdata('email')) {
-		// 	redirect('peserta/auth');
-		// }
-		$data['judul'] = 'Preneur Academy | Beranda';
-		$this->load->view("landingpage/template/header", $data);
-		$this->load->view("landingpage/index");
-		$this->load->view("landingpage/template/footer");
+		$this->load->model('admin/m_medsos');
+        $this->load->model('admin/m_navbar');
+		$this->load->model('admin/m_kebijakan');
 	}
 
 	/** Menampilkan Login */
 	public function login()
 	{
-		// if ($this->session->userdata('email')) {
-		// 	redirect('peserta/auth');
-		// }
+		$data['footer'] = $this->m_medsos->get_data(); 
+        $data['header'] = $this->m_navbar->get_navbar(); 
+        $data['kebijakan'] = $this->m_kebijakan->get_data(); 
+		if ($this->session->userdata('email')) {
+			redirect('peserta/dashboard');
+		}
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email', [
 			'required' => 'Kolom ini harus di isi',
 			'valid_email' => 'Email tidak valid'
@@ -62,37 +56,32 @@ class Auth extends CI_Controller
 					];
 					$this->session->set_userdata($data);
 					if ($user['ID_ROLE'] == 2) {
-						$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<h5><i class="icon fas fa-check"></i> Anda berhasil login!</h5></div>');
-						redirect('peserta/auth');
-					}
+						$this->session->set_flashdata('message', 'isLogin');
+						redirect('peserta/dashboard');
+					} 
 				} else {
-					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<h5><i class="icon fas fa-ban"></i> Email/Password salah!</h5></div>');
-					redirect('peserta/auth/login');
+					$this->session->set_flashdata('message', 'email/pswwrong');
+					redirect('auth');
 				}
 			} else {
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<h5><i class="icon fas fa-ban"></i> Email belum diaktivasi!</h5></div>');
-				redirect('peserta/auth/login');
+				$this->session->set_flashdata('message', 'emailnotactivate');
+				redirect('auth');
 			}
 		} else {
-			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			<h5><i class="icon fas fa-ban"></i> Email belum terdaftar!</h5></div>');
-			redirect('peserta/auth/login');
+			$this->session->set_flashdata('message', 'emailnotreg');
+			redirect('auth');
 		}
 	}
 
 	/** Menampilkan Register */
 	public function register()
 	{
-		// if ($this->session->userdata('email')) {
-		// 	redirect('peserta/auth');
-		// }
+		$data['footer'] = $this->m_medsos->get_data(); 
+        $data['header'] = $this->m_navbar->get_navbar(); 
+        $data['kebijakan'] = $this->m_kebijakan->get_data(); 
+		if ($this->session->userdata('email')) {
+			redirect('peserta/dashboard');
+		}
 
 		$tabel = $this->m_auth->idpsr();
 		$num = $tabel + 1;
@@ -121,8 +110,8 @@ class Auth extends CI_Controller
 
 		$this->form_validation->set_rules('nomorwa', 'Nomorwa', 'required|trim|min_length[11]|max_length[13]', [
 			'required' => 'Kolom ini harus diisi',
-			'min_length' => 'Nomor terlalu pendek',
-			'max_length' => 'Nomor terlalu panjang'
+			'min_length' => 'Format yang anda masukkan salah',
+			'max_length' => 'Format yang anda masukkan salah'
 		]);
 
 		$this->form_validation->set_rules('password', 'Password', 'required|trim|min_length[8]|matches[password1]', [
@@ -163,6 +152,7 @@ class Auth extends CI_Controller
 				'HP_PS' => $nohp,
 				'EMAIL_PS' => $email,
 				'PSW_PS' => $password,
+				'FTO_PS' => 'default.jpg',
 				'ID_ROLE' => 2,
 				'ACTIVE' => 0,
 				'DATE_CREATE' => time()
@@ -174,10 +164,10 @@ class Auth extends CI_Controller
 
 			$this->_sendMail($token, 'verify');
 
-			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible text-center">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<p class="text-center"><i class="icon fas fa-check"></i><b> Buat akun baru berhasil </b></br></hr>silahkan cek email anda untuk mengaktivasi akun anda!</p></div>');
-			redirect('peserta/auth/login');
+			redirect('auth');
 		}
 	}
 	
@@ -218,7 +208,7 @@ class Auth extends CI_Controller
 				<p>Email : " . $email . "</p>
 				<p>Tolong Klik Link Dibawah ini untuk mengaktivasi akun anda !,</p>
 				<p>link otomatis akan kadaluarsa dalam waktu 2 X 24 jam.</p>
-				<h4><a href='" . base_url() . "peserta/auth/verify?email=" . $email . "&token=" . urlencode($token) . "'>Aktivasi!</a></h4>
+				<h4><a href='" . base_url() . "verify?email=" . $email . "&token=" . urlencode($token) . "'>Aktivasi!</a></h4>
 			</body>
 			</html>
 		";
@@ -235,7 +225,7 @@ class Auth extends CI_Controller
 				<p>Email anda : " . $email . "</p>
 				<p>Klik link di bawah ini untuk mengubah password anda !,</p> 
 				<p>link otomatis akan kadaluarsa dalam waktu 2 jam. </p>
-				<h4><a href='" . base_url() . "peserta/auth/ubahpassword?email=" . $email . "&token=" . urlencode($token) . "'>Ubah Password!!</a></h4>
+				<h4><a href='" . base_url() . "repass?email=" . $email . "&token=" . urlencode($token) . "'>Ubah Password!!</a></h4>
 			</body>
 			</html>
 		";
@@ -279,10 +269,10 @@ class Auth extends CI_Controller
 					$this->db->delete('token', [
 						'EMAIL' => $email
 					]);
-					$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+					$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible text-text-center">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 					<p class="text-center"><i class="icon fas fa-check"></i><b> Akun berhasil di aktivasi </b></br>silahkan login!</p></div>');
-					redirect('peserta/auth/login');
+					redirect('auth');
 				} else {
 					$this->m_auth->del($email);
 
@@ -290,10 +280,10 @@ class Auth extends CI_Controller
 						'EMAIL' => $email
 					]);
 
-					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 					<p class="text-center"><i class="icon fas fa-ban"></i><b> Token sudah kadaluarsa!</b></p></div>');
-					redirect('peserta/auth/login');
+					redirect('auth');
 				}
 			} else {
 				$this->m_auth->del($email);
@@ -302,22 +292,28 @@ class Auth extends CI_Controller
 					'EMAIL' => $email
 				]);
 
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<p class="text-center"><i class="icon fas fa-ban"></i><b> Token anda salah!</b></p></div>');
-				redirect('peserta/auth/login');
+				redirect('auth');
 			}
 		} else {
-			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<p class="text-center"><i class="icon fas fa-ban"></i><b> Aktivasi akun gagal!</b></p></div>');
-			redirect('peserta/auth/login');
+			redirect('auth');
 		}
 	}
 
 	/**Fungsi untuk meminta link form ubah password yang dikirim lewat email */
 	public function lupapsw()
 	{
+		$data['footer'] = $this->m_medsos->get_data(); 
+        $data['header'] = $this->m_navbar->get_navbar(); 
+        $data['kebijakan'] = $this->m_kebijakan->get_data(); 
+		if ($this->session->userdata('email')) {
+			redirect('peserta/dashboard');
+		}
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email', [
 			'required' => 'Kolom ini harus diisi',
 			'valid_email' => 'Email tidak valid'
@@ -343,16 +339,16 @@ class Auth extends CI_Controller
 				$this->db->insert('token', $user_token);
 				$this->_sendMail($token, 'forgot');
 
-				$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+				$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible text-center">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<p class="text-center"><i class="icon fas fa-check"></i><b> Silahkan cek email anda untuk ubah password!</b></p></div>');
-				redirect('peserta/auth/lupapsw');
+				redirect('forgot');
 			} else {
 
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<p class="text-center"><i class="icon fas fa-ban"></i><b> Email belum terdaftar/aktif!</b></p></div>');
-				redirect('peserta/auth/lupapsw');
+				redirect('forgot');
 			}
 		}
 	}
@@ -386,22 +382,22 @@ class Auth extends CI_Controller
 						'EMAIL' => $email
 					]);
 
-					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 					<p class="text-center"><i class="icon fas fa-ban"></i><b> Token sudah kadaluarsa!</b></p></div>');
-					redirect('peserta/auth/login');
+					redirect('auth');
 				}
 			} else {
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 				<p class="text-center"><i class="icon fas fa-ban"></i><b> Reset password gagal!</b> token salah</p></div>');
-				redirect('peserta/auth/login');
+				redirect('auth');
 			}
 		} else {
-			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
+			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible text-center">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<p class="text-center"><i class="icon fas fa-ban"></i><b> Reset password gagal!</b> email salah</p></div>');
-			redirect('peserta/auth/login');
+			redirect('auth');
 		}
 	}
 
@@ -409,7 +405,7 @@ class Auth extends CI_Controller
 	public function recoverpsw()
 	{
 		if (!$this->session->userdata('reset_email')) {
-			redirect('peserta/auth/login');
+			redirect('auth');
 		}
 
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[8]|matches[password1]', [
@@ -437,10 +433,10 @@ class Auth extends CI_Controller
 
 			$this->session->unset_userdata('reset_email');
 
-			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
+			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible text-center">
 			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 			<p class="text-center"><i class="icon fas fa-check"></i><b> Password berhasil diubah!</b> Silahkan login kembali</p></div>');
-			redirect('peserta/auth/login');
+			redirect('auth');
 		}
 	}
 
@@ -449,9 +445,7 @@ class Auth extends CI_Controller
 	{
 		$this->session->unset_userdata('email');
 		$this->session->unset_userdata('role');
-		$this->session->set_flashdata('message', '<div class="alert alert-warning alert-dismissible">
-		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		<h5 class="text-center"><i class="icon fas fa-exclamation-triangle"></i> Anda telah keluar!</h5></div>');
-		redirect('peserta/auth');
+		$this->session->set_flashdata('message', 'logout');
+		redirect('auth');
 	}
 }

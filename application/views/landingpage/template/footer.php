@@ -15,15 +15,14 @@
                         <div class="col-md-3 mb-md-0 mb-3">
                         <h5 class="text-uppercase">Menu</h5>
                         <ul class="list-unstyled">
+                            <?php foreach ($header as $h) :
+                            $name = $h['NM_NV'];
+                            $link = $h['LINK_NV'];
+                            ?>
                             <li>
-                            <a href="<?= base_url();?>">Beranda</a>
+                            <a href="<?= $link;?>"><?= $name;?></a>
                             </li>
-                            <li>
-                            <a href="#">Kelas</a>
-                            </li>
-                            <li>
-                            <a href="#">Blog</a>
-                            </li>
+                            <?php endforeach;?>
                         </ul>
                         </div>
                         <div class="col-md-3 mb-md-0 mb-3">
@@ -34,13 +33,21 @@
 
                 <div class="social text-center">
                     <h6 class="text-uppercase">Ikuti akun sosial media kami</h6>
-                    <a href="<?= base_url(); ?>https://www.facebook.com/preneuracademy/"><i class="fab fa-facebook"></i></a>
-                    <a href="<?= base_url(); ?>https://www.instagram.com/preneuracademy/"><i class="fab fa-instagram"></i></a>
-                    <a href="<?= base_url(); ?>https://www.youtube.com/channel/UCr5MmNPr-xNwbyt7Hrzu6Hw"><i class="fab fa-youtube"></i></a>
-                    <a href="<?= base_url(); ?>https://twitter.com/preneuracademy"><i class="fab fa-twitter"></i></a>
+                    <?php foreach ($footer as $f) :
+                        $icon = $f['IC_MS'];
+                        $link = $f['LINK_MS'];
+                    ?>
+                    <a href="<?= $link;?>" target="_blank"><i class="<?= $icon;?>"></i></a>
+                    <?php endforeach;?>
                 </div>
                 <div class="copyrights text-center">
-                    <p class="para">
+                <?php foreach ($kebijakan as $k) :
+                                $name = $k['NM_KB'];
+                                $link = $k['LINK_KB'];
+                                ?>
+                                <a class="mt-4 mb-4 mr-2 ml-2" href="<?= $link;?>" target="_blank"><?= $name;?></a>
+                            <?php endforeach;?>
+                    <p class="para mt-4">
                         Copyright ©<?= date('Y')?> All rights reserved by
                         <a href="<?= base_url(); ?>"><span style="color: var(--primary-color);">Preneur Academy</span></a>
                     </p>
@@ -59,6 +66,12 @@
     <!--  isotope js library  -->
     <script src="<?= base_url(); ?>assets/dist/js/plugin/isotope/isotope.min.js"></script>
 
+    <!-- SweetAlert2 -->
+    <script src="<?= base_url(); ?>assets/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+
+    <!-- Showing Sweet Alert -->
+    <script src="<?= base_url(); ?>assets/dist/js/myscript.js"></script>
+
     <!--  Magnific popup script file  -->
     <script src="<?= base_url(); ?>assets/dist/js/plugin/Magnific-Popup/dist/jquery.magnific-popup.min.js"></script>
 
@@ -68,10 +81,51 @@
     <!--  custom js file  -->
     <script src="<?= base_url(); ?>assets/dist/js/main.js"></script>
 
+    <script>
+        jQuery('.owl-carousel').owlCarousel({
+
+            loop:true,
+
+            margin:10,
+
+            dots: true,
+
+            autoplay: 3000, // time for slides changes
+
+            smartSpeed: 1000, // duration of change of 1 slide
+
+            responsiveClass:true,
+
+            responsive:{
+
+                0:{
+
+                    items:1
+
+                },
+
+                600:{
+
+                    items:2
+
+                },
+
+                1000:{
+
+                    items:3,
+
+                    loop:true
+
+                }
+
+            }
+
+            });
+    </script>
+
     <!--===============================================================================================-->
 
-
-
+    </div>
 </body>
 
 </html>

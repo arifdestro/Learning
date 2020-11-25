@@ -7,17 +7,21 @@
       </div>
       <!-- /.login-logo -->
       <p class="login-box-msg"><b>Lupa</b> Password</p>
-      <?= $this->session->flashdata('message'); ?>
+      <div class="flash-data" data-flashdata="<?= $this->session->flashdata('message'); ?>"></div>
       <form action="<?= base_url('admin/auth/forgotpsw'); ?>" method="post">
         <div class="input-group mb-3">
-          <input type="email" class="form-control" name="email" placeholder="Email">
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-envelope logos"></span>
+          <div class="input-group">
+            <input type="email" class="form-control" name="email" placeholder="Email">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope logos"></span>
+              </div>
             </div>
           </div>
+          <div>
+            <?= form_error('email', '<small class="text-danger">', '</small>'); ?>
+          </div>
         </div>
-        <?= form_error('email', '<small class="text-danger">', '</small>'); ?>
 
         <div class="row">
           <div class="col-12 btn-login">

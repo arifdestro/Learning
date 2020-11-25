@@ -14,8 +14,9 @@ class Auth extends CI_Controller
 	public function index()
 	{
 		if ($this->session->userdata('email')) {
-			redirect('admin/auth');
+			redirect('admin/dashboard');
 		}
+
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email', [
 			'required' => 'Kolom ini harus di isi',
 			'valid_email' => 'Email tidak valid'
@@ -37,6 +38,7 @@ class Auth extends CI_Controller
 	/**Fungsi Login */
 	private function _login()
 	{
+
 		$email = htmlspecialchars(($this->input->post('email')));
 		$password = htmlspecialchars(($this->input->post('password')));
 		$user = $this->db->get_where('admin', ['EMAIL_ADM' => $email])->row_array();
@@ -51,27 +53,19 @@ class Auth extends CI_Controller
 					];
 					$this->session->set_userdata($data);
 					if ($user['ID_ROLE'] == 1) {
-						$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible" role="alert">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<h5><i class="icon fas fa-check"></i> Anda berhasil login!</h5></div>');
+						$this->session->set_flashdata('message', 'isLogin');
 						redirect('admin/dashboard');
-					}
+					} 
 				} else {
-					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<h5><i class="icon fas fa-ban"></i> Email/Password salah!</h5></div>');
+					$this->session->set_flashdata('message', 'email/pswwrong');
 					redirect('admin/auth');
 				}
 			} else {
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<h5><i class="icon fas fa-ban"></i> Email belum diaktivasi!</h5></div>');
+				$this->session->set_flashdata('message', 'emailnotactivate');
 				redirect('admin/auth');
 			}
 		} else {
-			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			<h5><i class="icon fas fa-ban"></i> Email belum terdaftar!</h5></div>');
+			$this->session->set_flashdata('message', 'emailnotreg');
 			redirect('admin/auth');
 		}
 	}
@@ -148,6 +142,10 @@ class Auth extends CI_Controller
 	/**Fungsi untuk meminta link form ubah password yang dikirim lewat email */
 	public function forgotpsw()
 	{
+		if ($this->session->userdata('email')) {
+			redirect('admin/dashboard');
+		}
+		
 		$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email', [
 			'required' => 'Kolom ini harus diisi',
 			'valid_email' => 'Email tidak valid'
@@ -176,15 +174,10 @@ class Auth extends CI_Controller
 				$this->db->insert('token', $user_token);
 				$this->_sendEmail($token, 'forgot');
 
-				$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<p><i class="icon fas fa-check"></i> Silahkan cek email anda </br>untuk ubah password!</p></div>');
+				$this->session->set_flashdata('message', 'cekemail');
 				redirect('admin/auth/forgotpsw');
 			} else {
-
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<p><i class="icon fas fa-ban"></i> Email belum terdaftar/aktif!</p></div>');
+				$this->session->set_flashdata('message', 'emailnotreg');
 				redirect('admin/auth/forgotpsw');
 			}
 		}
@@ -221,21 +214,15 @@ class Auth extends CI_Controller
 						'EMAIL' => $email
 					]);
 
-					$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					<p><i class="icon fas fa-ban"></i> Token sudah kadaluarsa!</p></div>');
+					$this->session->set_flashdata('message', 'exptoken');
 					redirect('admin/auth');
 				}
 			} else {
-				$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-				<p><i class="icon fas fa-ban"></i> Reset password gagal! token salah</p></div>');
+				$this->session->set_flashdata('message', 'wrongtoken');
 				redirect('admin/auth');
 			}
 		} else {
-			$this->session->set_flashdata('message', '<div class="alert alert-danger alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			<p><i class="icon fas fa-ban"></i> Reset password gagal! email salah</p></div>');
+			$this->session->set_flashdata('message', 'emailwrong');
 			redirect('admin/auth');
 		}
 	}
@@ -274,9 +261,7 @@ class Auth extends CI_Controller
 
 			$this->session->unset_userdata('reset_email');
 
-			$this->session->set_flashdata('message', '<div class="alert alert-success alert-dismissible">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-			<p><i class="icon fas fa-check"></i> Password berhasil diubah! Silahkan login kembali</p></div>');
+			$this->session->set_flashdata('message', 'Password');
 			redirect('admin/auth');
 		}
 	}
@@ -286,9 +271,7 @@ class Auth extends CI_Controller
 	{
 		$this->session->unset_userdata('email');
 		$this->session->unset_userdata('role');
-		$this->session->set_flashdata('message', '<div class="alert alert-warning alert-dismissible">
-		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		<h5><i class="icon fas fa-exclamation-triangle"></i> Anda telah keluar!</h5></div>');
+		$this->session->set_flashdata('message', 'logout');
 		redirect('admin/auth');
 	}
 }
